@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#090a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>HIIT Timer — Interval Workout & Animated Demos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ======================================================================
+       SCREEN 1: HOME & SETTINGS
+       ====================================================================== -->
+  <section class="screen active" id="screen-home">
+    <div class="home-header">
+      <h1 class="home-title">HIIT Workout</h1>
+      <p class="home-subtitle">Interval Training with Live Demos</p>
+    </div>
+
+    <div class="settings-card">
+      <!-- 1. Target Focus -->
+      <div class="setting-group">
+        <div class="setting-label">
+          <span>Target Muscle Group</span>
+        </div>
+        <div class="segmented-control" id="seg-focus">
+          <button class="seg-btn" data-val="all">Full Body</button>
+          <button class="seg-btn" data-val="legs">Legs</button>
+          <button class="seg-btn" data-val="core">Core</button>
+          <button class="seg-btn" data-val="upper">Upper</button>
+        </div>
+      </div>
+
+      <!-- 2. Kettlebell Equipment -->
+      <div class="setting-group">
+        <div class="setting-label">
+          <span>Include Kettlebell?</span>
+        </div>
+        <div class="segmented-control" id="seg-kb">
+          <button class="seg-btn" data-val="true">Yes (KB + Body)</button>
+          <button class="seg-btn" data-val="false">No (Bodyweight Only)</button>
+        </div>
+      </div>
+
+      <!-- 3. Workout Duration -->
+      <div class="setting-group">
+        <div class="setting-label">
+          <span>Workout Duration</span>
+        </div>
+        <div class="segmented-control" id="seg-duration">
+          <button class="seg-btn" data-val="20">20 Min</button>
+          <button class="seg-btn" data-val="30">30 Min</button>
+          <button class="seg-btn" data-val="40">40 Min</button>
+        </div>
+      </div>
+
+      <!-- 4. Work / Rest Interval Tempo -->
+      <div class="setting-group">
+        <div class="setting-label">
+          <span>Interval Ratio</span>
+        </div>
+        <div class="segmented-control" id="seg-tempo">
+          <button class="seg-btn" data-val="40/20">40s Work / 20s Rest</button>
+          <button class="seg-btn" data-val="30/15">30s Work / 15s Rest</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start Action -->
+    <button class="btn-start" id="btn-start-workout">
+      <span>START WORKOUT</span>
+      <span>🔥</span>
+    </button>
+
+    <div class="home-footer-links">
+      <a href="gallery.html">Explore Exercise Library & Demos (40+ Exercises) &rarr;</a>
+    </div>
+  </section>
+
+
+  <!-- ======================================================================
+       SCREEN 2: WORKOUT (ACTIVE INTERVAL)
+       ====================================================================== -->
+  <section class="screen" id="screen-workout">
+    <div class="workout-header">
+      <span class="workout-progress-pill" id="workout-progress-pill">Interval 1 of 20</span>
+      <span class="workout-target-pill" id="workout-target-pill">Glutes</span>
+      <button class="btn-end-workout" id="btn-end-workout">End</button>
+    </div>
+
+    <!-- Mode Status: WORK vs REST -->
+    <div class="mode-banner work" id="mode-banner">🔥 WORK</div>
+
+    <!-- Switch Sides Alert Banner for Unilateral Exercises -->
+    <div class="switch-sides-banner" id="switch-sides-banner">
+      ⇄ SWITCH SIDES NOW!
+    </div>
+
+    <!-- Large Looping Exercise Demo Frame -->
+    <div class="demo-frame">
+      <img id="workout-demo-img" src="" alt="Exercise Demonstration">
+      <div class="demo-next-label" id="demo-next-label" style="display: none;">UP NEXT</div>
+    </div>
+
+    <!-- Exercise Details -->
+    <div class="exercise-meta">
+      <div class="current-exercise-name" id="current-ex-name">Kettlebell Swing</div>
+      <div class="current-exercise-cue" id="current-ex-cue">Hinge back deeply at the hips, snap glutes forward.</div>
+    </div>
+
+    <!-- Massive Timer Countdown (>= 25% Screen Height) -->
+    <div class="timer-container">
+      <div class="timer-countdown" id="timer-countdown">40</div>
+    </div>
+
+    <!-- Smooth Progress Bar -->
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill work" id="progress-bar-fill"></div>
+    </div>
+
+    <!-- Workout Controls -->
+    <div class="workout-controls">
+      <button class="ctrl-btn" id="btn-pause-resume">⏸ Pause</button>
+      <button class="ctrl-btn" id="btn-skip">Skip &rarr;</button>
+    </div>
+  </section>
+
+
+  <!-- ======================================================================
+       SCREEN 3: DONE / COMPLETION SUMMARY
+       ====================================================================== -->
+  <section class="screen" id="screen-done">
+    <div class="done-content">
+      <div class="done-badge-icon">🎉</div>
+      <h2 class="done-title">Workout Crushed!</h2>
+      <p class="done-subtitle">Incredible effort. You stayed consistent and finished strong.</p>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="done-stat-time">30 min</div>
+          <div class="stat-lbl">Duration</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="done-stat-calories">315 kcal</div>
+          <div class="stat-lbl">Est. Calories</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="done-stat-intervals">20 rounds</div>
+          <div class="stat-lbl">Work Sets</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="done-stat-focus">FULL BODY</div>
+          <div class="stat-lbl">Focus Area</div>
+        </div>
+      </div>
+
+      <button class="btn-start" id="btn-done-restart" style="margin-top: 16px;">
+        <span>START ANOTHER WORKOUT</span>
+      </button>
+
+      <div class="home-footer-links" style="margin-top: 8px;">
+        <a href="gallery.html">Browse Exercise Library &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ======================================================================
+       IN-PAGE MODAL: CANCEL WORKOUT CONFIRMATION
+       ====================================================================== -->
+  <div class="modal-backdrop" id="modal-cancel-workout">
+    <div class="modal-dialog">
+      <h3>End Workout?</h3>
+      <p>Are you sure you want to stop this workout session? Your current progress will not be saved.</p>
+      <div class="modal-actions">
+        <button class="modal-btn" id="btn-modal-stay">Keep Going</button>
+        <button class="modal-btn danger" id="btn-modal-quit">End Workout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="js/exercises.js"></script>
+  <script src="js/workout.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

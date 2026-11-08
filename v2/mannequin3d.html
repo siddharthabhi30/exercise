@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>3D Mannequin Exercise Studio</title>
+  <style>
+    :root {
+      --bg: #0f1015;
+      --surface: #181920;
+      --card-border: #262833;
+      --text: #f7fafc;
+      --text-muted: #a0aec0;
+      --primary: #38bdf8;
+      --accent: #f43f5e;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    header {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-3d {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .header-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.15s ease;
+    }
+
+    .header-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+
+    #viewport-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 40%, #1e2029 0%, #0c0d12 100%);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .hud-overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      pointer-events: none;
+    }
+
+    .current-ex-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    .current-ex-cue {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      max-width: 320px;
+      margin-top: 2px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+
+    .camera-hint {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-size: 0.72rem;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      padding: 5px 10px;
+      border-radius: 20px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Bottom Control Bar */
+    .controls-panel {
+      padding: 12px 16px 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--card-border);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .selector-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .selector-row::-webkit-scrollbar { display: none; }
+
+    .ex-chip {
+      flex-shrink: 0;
+      background: #262833;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .ex-chip.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: #262833;
+      color: var(--text);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action:hover {
+      background: #323544;
+    }
+
+    .view-toggles {
+      display: flex;
+      gap: 6px;
+    }
+
+    .view-btn {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .view-btn.active {
+      background: var(--primary);
+      color: #0f1015;
+      font-weight: 700;
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>3D Mannequin Studio <span class="badge-3d">Realistic Depth</span></h1>
+    <div class="header-links">
+      <a href="gallery.html">← Back to 2D Gallery</a>
+    </div>
+  </header>
+
+  <div id="viewport-container">
+    <div class="hud-overlay">
+      <div class="current-ex-name" id="hud-name">Goblet Squat</div>
+      <div class="current-ex-cue" id="hud-cue">Hold KB at chest, sit back deep between heels with proud chest</div>
+    </div>
+    <div class="camera-hint">👆 Drag to orbit 360° · Pinch/scroll to zoom</div>
+  </div>
+
+  <div class="controls-panel">
+    <!-- Exercise Chips for quick inspection -->
+    <div class="selector-row" id="chips-container"></div>
+
+    <div class="action-row">
+      <div class="view-toggles">
+        <button class="view-btn active" onclick="setPresetView('isometric')">3/4 Isometric</button>
+        <button class="view-btn" onclick="setPresetView('front')">Front</button>
+        <button class="view-btn" onclick="setPresetView('side')">Side</button>
+      </div>
+
+      <button class="btn-action" id="btn-play-pause" onclick="togglePlayPause()">
+        <span id="play-icon">⏸</span> Pause Loop
+      </button>
+    </div>
+  </div>
+
+  <!-- Local Offline Three.js -->
+  <script src="js/three.min.js"></script>
+  <script src="js/exercises.js"></script>
+  <script>
+    // ============================================================
+    // THREE.JS 3D PROCEDURAL MANNEQUIN & LIGHTING SYSTEM
+    // ============================================================
+
+    const container = document.getElementById('viewport-container');
+    let scene, camera, renderer, mannequinGroup, shadowPlatform;
+    let isPlaying = true;
+    let currentExIndex = 1; // default to Goblet Squat
+
+    // Scene Dimensions & Scaling
+    const SCALE = 0.12;
+
+    // Materials (Stylized Wooden Artist Mannequin with warm specular highlights)
+    const matWood = new THREE.MeshStandardMaterial({
+      color: 0xdfb88e,
+      roughness: 0.38,
+      metalness: 0.05
+    });
+
+    const matJoint = new THREE.MeshStandardMaterial({
+      color: 0x4a5568,
+      roughness: 0.3,
+      metalness: 0.2
+    });
+
+    const matChest = new THREE.MeshStandardMaterial({
+      color: 0x3182ce, // Athletic blue chest accent
+      roughness: 0.35,
+      metalness: 0.1
+    });
+
+    const matKB = new THREE.MeshStandardMaterial({
+      color: 0xe53e3e, // Bold crimson kettlebell
+      roughness: 0.25,
+      metalness: 0.45
+    });
+
+    const matKBHandle = new THREE.MeshStandardMaterial({
+      color: 0xd1d5db, // Steel handle
+      roughness: 0.2,
+      metalness: 0.8
+    });
+
+    // Rig References
+    const rig = {
+      root: null,
+      torso: null,
+      chest: null,
+      head: null,
+      shoulderL: null, armUpperL: null, elbowL: null, armForeL: null, handL: null,
+      shoulderR: null, armUpperR: null, elbowR: null, armForeR: null, handR: null,
+      hipL: null, legThighL: null, kneeL: null, legShinL: null, footL: null,
+      hipR: null, legThighR: null, kneeR: null, legShinR: null, footR: null,
+      kettlebell: null
+    };
+
+    function init3D() {
+      // 1. Scene
+      scene = new THREE.Scene();
+      scene.fog = new THREE.Fog(0x0c0d12, 40, 100);
+
+      // 2. Camera
+      camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.5, 200);
+      setPresetView('isometric');
+
+      // 3. Renderer with Soft Shadows
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // 4. Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xfff7ed, 1.4);
+      dirLight.position.set(15, 30, 20);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 1024;
+      dirLight.shadow.mapSize.height = 1024;
+      dirLight.shadow.camera.near = 5;
+      dirLight.shadow.camera.far = 70;
+      dirLight.shadow.camera.left = -15;
+      dirLight.shadow.camera.right = 15;
+      dirLight.shadow.camera.top = 20;
+      dirLight.shadow.camera.bottom = -5;
+      dirLight.shadow.bias = -0.001;
+      scene.add(dirLight);
+
+      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.8);
+      rimLight.position.set(-15, 10, -20);
+      scene.add(rimLight);
+
+      // 5. Floor Platform (Circular Gym Mat that receives soft shadows)
+      const floorGeo = new THREE.CylinderGeometry(14, 14, 0.4, 48);
+      const floorMat = new THREE.MeshStandardMaterial({
+        color: 0x181a24,
+        roughness: 0.85,
+        metalness: 0.05
+      });
+      shadowPlatform = new THREE.Mesh(floorGeo, floorMat);
+      shadowPlatform.position.y = -0.2;
+      shadowPlatform.receiveShadow = true;
+      scene.add(shadowPlatform);
+
+      // Subtle floor ring
+      const ringGeo = new THREE.RingGeometry(13.7, 13.9, 48);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x2d3748, side: THREE.DoubleSide });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.x = -Math.PI / 2;
+      ringMesh.position.y = 0.01;
+      scene.add(ringMesh);
+
+      // 6. Build the 3D Mannequin
+      buildMannequin();
+
+      // 7. Setup Mouse / Touch Orbit Controls
+      setupOrbit();
+
+      // 8. Handle Window Resize
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    // Helper: Create rounded bone capsule / cylinder
+    function makeLimbMesh(radiusTop, radiusBottom, length, material) {
+      const group = new THREE.Group();
+      const geo = new THREE.CylinderGeometry(radiusTop, radiusBottom, length, 16);
+      geo.translate(0, -length / 2, 0); // origin at top joint
+      const mesh = new THREE.Mesh(geo, material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
+      return group;
+    }
+
+    function makeJointSphere(radius, material = matJoint) {
+      const geo = new THREE.SphereGeometry(radius, 16, 16);
+      const mesh = new THREE.Mesh(geo, material);
+      mesh.castShadow = true;
+      return mesh;
+    }
+
+    function buildMannequin() {
+      mannequinGroup = new THREE.Group();
+      scene.add(mannequinGroup);
+
+      // Hip / Pelvis Root
+      rig.root = new THREE.Group();
+      mannequinGroup.add(rig.root);
+
+      const pelvisMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.1, 1.2, 16), matWood);
+      pelvisMesh.castShadow = true;
+      rig.root.add(pelvisMesh);
+
+      // Spine & Torso
+      rig.torso = new THREE.Group();
+      rig.torso.position.y = 0.6;
+      rig.root.add(rig.torso);
+
+      const spineMesh = makeJointSphere(1.0);
+      rig.torso.add(spineMesh);
+
+      // Chest / Thorax (Athletic tapered torso)
+      rig.chest = new THREE.Group();
+      rig.chest.position.y = 2.2;
+      rig.torso.add(rig.chest);
+
+      const chestGeo = new THREE.CylinderGeometry(2.3, 1.5, 3.2, 16);
+      const chestMesh = new THREE.Mesh(chestGeo, matChest);
+      chestMesh.position.y = 1.6;
+      chestMesh.castShadow = true;
+      rig.chest.add(chestMesh);
+
+      // Head & Neck
+      rig.head = new THREE.Group();
+      rig.head.position.y = 3.6;
+      rig.chest.add(rig.head);
+
+      const neckMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 1.0, 12), matJoint);
+      neckMesh.position.y = 0.5;
+      rig.head.add(neckMesh);
+
+      const headMesh = new THREE.Mesh(new THREE.SphereGeometry(1.6, 20, 20), matWood);
+      headMesh.position.y = 2.0;
+      headMesh.scale.set(1.0, 1.2, 1.1);
+      headMesh.castShadow = true;
+      rig.head.add(headMesh);
+
+      // ================= LEFT ARM =================
+      rig.shoulderL = new THREE.Group();
+      rig.shoulderL.position.set(2.4, 2.9, 0);
+      rig.chest.add(rig.shoulderL);
+      rig.shoulderL.add(makeJointSphere(0.9));
+
+      rig.armUpperL = makeLimbMesh(0.85, 0.75, 3.2, matWood);
+      rig.shoulderL.add(rig.armUpperL);
+
+      rig.elbowL = new THREE.Group();
+      rig.elbowL.position.y = -3.2;
+      rig.armUpperL.add(rig.elbowL);
+      rig.elbowL.add(makeJointSphere(0.75));
+
+      rig.armForeL = makeLimbMesh(0.72, 0.62, 3.0, matWood);
+      rig.elbowL.add(rig.armForeL);
+
+      rig.handL = makeJointSphere(0.7, matJoint);
+      rig.handL.position.y = -3.0;
+      rig.armForeL.add(rig.handL);
+
+      // ================= RIGHT ARM =================
+      rig.shoulderR = new THREE.Group();
+      rig.shoulderR.position.set(-2.4, 2.9, 0);
+      rig.chest.add(rig.shoulderR);
+      rig.shoulderR.add(makeJointSphere(0.9));
+
+      rig.armUpperR = makeLimbMesh(0.85, 0.75, 3.2, matWood);
+      rig.shoulderR.add(rig.armUpperR);
+
+      rig.elbowR = new THREE.Group();
+      rig.elbowR.position.y = -3.2;
+      rig.armUpperR.add(rig.elbowR);
+      rig.elbowR.add(makeJointSphere(0.75));
+
+      rig.armForeR = makeLimbMesh(0.72, 0.62, 3.0, matWood);
+      rig.elbowR.add(rig.armForeR);
+
+      rig.handR = makeJointSphere(0.7, matJoint);
+      rig.handR.position.y = -3.0;
+      rig.armForeR.add(rig.handR);
+
+      // ================= LEFT LEG =================
+      rig.hipL = new THREE.Group();
+      rig.hipL.position.set(1.2, -0.4, 0);
+      rig.root.add(rig.hipL);
+      rig.hipL.add(makeJointSphere(0.95));
+
+      rig.legThighL = makeLimbMesh(1.15, 0.95, 4.4, matWood);
+      rig.hipL.add(rig.legThighL);
+
+      rig.kneeL = new THREE.Group();
+      rig.kneeL.position.y = -4.4;
+      rig.legThighL.add(rig.kneeL);
+      rig.kneeL.add(makeJointSphere(0.9));
+
+      rig.legShinL = makeLimbMesh(0.9, 0.75, 3.8, matWood);
+      rig.kneeL.add(rig.legShinL);
+
+      rig.footL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 1.8), matJoint);
+      rig.footL.position.set(0, -3.8, 0.4);
+      rig.footL.castShadow = true;
+      rig.legShinL.add(rig.footL);
+
+      // ================= RIGHT LEG =================
+      rig.hipR = new THREE.Group();
+      rig.hipR.position.set(-1.2, -0.4, 0);
+      rig.root.add(rig.hipR);
+      rig.hipR.add(makeJointSphere(0.95));
+
+      rig.legThighR = makeLimbMesh(1.15, 0.95, 4.4, matWood);
+      rig.hipR.add(rig.legThighR);
+
+      rig.kneeR = new THREE.Group();
+      rig.kneeR.position.y = -4.4;
+      rig.legThighR.add(rig.kneeR);
+      rig.kneeR.add(makeJointSphere(0.9));
+
+      rig.legShinR = makeLimbMesh(0.9, 0.75, 3.8, matWood);
+      rig.kneeR.add(rig.legShinR);
+
+      rig.footR = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 1.8), matJoint);
+      rig.footR.position.set(0, -3.8, 0.4);
+      rig.footR.castShadow = true;
+      rig.legShinR.add(rig.footR);
+
+      // ================= 3D KETTLEBELL =================
+      rig.kettlebell = new THREE.Group();
+      scene.add(rig.kettlebell);
+
+      const bellBall = new THREE.Mesh(new THREE.SphereGeometry(1.2, 24, 24), matKB);
+      bellBall.castShadow = true;
+      rig.kettlebell.add(bellBall);
+
+      // Torus handle
+      const handleMesh = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.16, 12, 24, Math.PI), matKBHandle);
+      handleMesh.position.y = 1.0;
+      handleMesh.rotation.z = -Math.PI;
+      handleMesh.castShadow = true;
+      rig.kettlebell.add(handleMesh);
+    }
+
+    // ============================================================
+    // POSE INTERPOLATION & MOTION SYSTEM
+    // ============================================================
+
+    let t0 = performance.now();
+
+    function rad(deg) { return deg * Math.PI / 180; }
+
+    function ease(k) { return (1 - Math.cos(Math.PI * k)) / 2; }
+
+    function applyPoseTo3D(ex, now) {
+      const frames = ex.frames;
+      const total = frames.reduce((s, f) => s + f.ms, 0);
+      let t = (now - t0) % total, i = 0;
+      while (t > frames[i].ms) { t -= frames[i].ms; i++; }
+      const a = frames[i], b = frames[(i + 1) % frames.length];
+      const k = ease(t / a.ms);
+
+      // Lerp 2D angles
+      const pA = a.pose, pB = b.pose;
+      const torso = (pA.torso || 0) + ((pB.torso || 0) - (pA.torso || 0)) * k;
+      const lift = (pA.lift || 0) + ((pB.lift || 0) - (pA.lift || 0)) * k;
+
+      const lerpArr = (arrA, arrB) => [
+        arrA[0] + (arrB[0] - arrA[0]) * k,
+        arrA[1] + (arrB[1] - arrA[1]) * k
+      ];
+
+      const armF = lerpArr(pA.armF || [0,0], pB.armF || [0,0]);
+      const armB = lerpArr(pA.armB || pA.armF || [0,0], pB.armB || pB.armF || [0,0]);
+      const legF = lerpArr(pA.legF || [0,0], pB.legF || [0,0]);
+      const legB = lerpArr(pA.legB || pA.legF || [0,0], pB.legB || pB.legF || [0,0]);
+
+      // Apply rotations based on whether view was side or front:
+      // In 3D, side view movements rotate along the pitch axis (X-axis).
+      // Front view movements rotate along the roll axis (Z-axis).
+      const isSide = ex.view === 'side';
+
+      if (isSide) {
+        // Front-to-back exercise (pitch rotations around X axis)
+        rig.torso.rotation.x = rad(torso);
+        rig.torso.rotation.z = 0;
+
+        // Legs (X rotation)
+        rig.hipL.rotation.x = -rad(legF[0]);
+        rig.hipL.rotation.z = 0;
+        rig.kneeL.rotation.x = -rad(legF[1] - legF[0]);
+
+        rig.hipR.rotation.x = -rad(legB[0]);
+        rig.hipR.rotation.z = 0;
+        rig.kneeR.rotation.x = -rad(legB[1] - legB[0]);
+
+        // Arms (X rotation)
+        rig.shoulderL.rotation.x = rad(armF[0]);
+        rig.shoulderL.rotation.z = rad(5);
+        rig.elbowL.rotation.x = rad(armF[1] - armF[0]);
+
+        rig.shoulderR.rotation.x = rad(armB[0]);
+        rig.shoulderR.rotation.z = -rad(5);
+        rig.elbowR.rotation.x = rad(armB[1] - armB[0]);
+
+      } else {
+        // Lateral / Rotational exercise (roll rotations around Z axis + yaw)
+        rig.torso.rotation.x = 0;
+        rig.torso.rotation.z = -rad(torso * 0.7);
+
+        // Arms flared to side (Z rotation)
+        rig.shoulderL.rotation.x = 0;
+        rig.shoulderL.rotation.z = -rad(armF[0]);
+        rig.elbowL.rotation.x = 0;
+        rig.elbowL.rotation.z = -rad(armF[1] - armF[0]);
+
+        rig.shoulderR.rotation.x = 0;
+        rig.shoulderR.rotation.z = rad(armB[0]);
+        rig.elbowR.rotation.x = 0;
+        rig.elbowR.rotation.z = rad(armB[1] - armB[0]);
+
+        // Legs
+        rig.hipL.rotation.z = -rad(legF[0]);
+        rig.kneeL.rotation.z = -rad(legF[1] - legF[0]);
+
+        rig.hipR.rotation.z = rad(legB[0]);
+        rig.kneeR.rotation.z = rad(legB[1] - legB[0]);
+      }
+
+      // Root vertical displacement (ground alignment)
+      // When lying on back (torso <= -70):
+      if (torso <= -60) {
+        rig.root.position.y = 1.0;
+        rig.root.rotation.x = rad(torso + 90);
+      } else if (torso >= 70 && !isSide) {
+        // Plank position
+        rig.root.position.y = 1.5;
+        rig.root.rotation.x = rad(torso);
+      } else {
+        // Standing / Squatting
+        const squatDepth = Math.max(0, Math.sin(rad(legF[0]))) * 2.8;
+        rig.root.position.y = 8.5 - squatDepth + (lift * 0.2);
+        rig.root.rotation.x = 0;
+      }
+
+      // Kettlebell attachment
+      if (ex.kb) {
+        rig.kettlebell.visible = true;
+        // Attach near hand
+        const handWorld = new THREE.Vector3();
+        rig.handL.getWorldPosition(handWorld);
+        rig.kettlebell.position.copy(handWorld);
+        rig.kettlebell.position.y -= 0.6;
+      } else {
+        rig.kettlebell.visible = false;
+      }
+    }
+
+    // ============================================================
+    // ORBIT CAMERA CONTROLS (Touch & Mouse Drag)
+    // ============================================================
+
+    let isDragging = false;
+    let prevMousePos = { x: 0, y: 0 };
+    let cameraAngle = { theta: 0.65, phi: 0.35, radius: 24 };
+
+    function setupOrbit() {
+      const dom = renderer.domElement;
+
+      dom.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMousePos = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMousePos.x;
+        const dy = e.clientY - prevMousePos.y;
+        cameraAngle.theta -= dx * 0.008;
+        cameraAngle.phi = Math.max(0.1, Math.min(Math.PI / 2.2, cameraAngle.phi + dy * 0.008));
+        prevMousePos = { x: e.clientX, y: e.clientY };
+        updateCameraFromAngles();
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+
+      // Touch controls
+      dom.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - prevMousePos.x;
+        const dy = e.touches[0].clientY - prevMousePos.y;
+        cameraAngle.theta -= dx * 0.01;
+        cameraAngle.phi = Math.max(0.1, Math.min(Math.PI / 2.2, cameraAngle.phi + dy * 0.01));
+        prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        updateCameraFromAngles();
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => { isDragging = false; });
+    }
+
+    function updateCameraFromAngles() {
+      const x = cameraAngle.radius * Math.sin(cameraAngle.theta) * Math.cos(cameraAngle.phi);
+      const z = cameraAngle.radius * Math.cos(cameraAngle.theta) * Math.cos(cameraAngle.phi);
+      const y = cameraAngle.radius * Math.sin(cameraAngle.phi);
+      camera.position.set(x, y + 5, z);
+      camera.lookAt(0, 6, 0);
+    }
+
+    function setPresetView(type) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.view-btn')).find(b => b.textContent.toLowerCase().includes(type));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (type === 'isometric') {
+        cameraAngle.theta = 0.65;
+        cameraAngle.phi = 0.38;
+      } else if (type === 'front') {
+        cameraAngle.theta = 0;
+        cameraAngle.phi = 0.15;
+      } else if (type === 'side') {
+        cameraAngle.theta = Math.PI / 2;
+        cameraAngle.phi = 0.15;
+      }
+      updateCameraFromAngles();
+    }
+
+    function onWindowResize() {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    // ============================================================
+    // UI SETUP & RENDER LOOP
+    // ============================================================
+
+    function setupUI() {
+      const container = document.getElementById('chips-container');
+      container.innerHTML = '';
+
+      EXERCISES.forEach((ex, idx) => {
+        const chip = document.createElement('button');
+        chip.className = 'ex-chip' + (idx === currentExIndex ? ' active' : '');
+        chip.textContent = ex.name + (ex.kb ? ' 🔔' : '');
+        chip.onclick = () => selectExercise(idx);
+        container.appendChild(chip);
+      });
+
+      updateHUD();
+    }
+
+    function selectExercise(idx) {
+      currentExIndex = idx;
+      t0 = performance.now();
+      document.querySelectorAll('.ex-chip').forEach((c, i) => {
+        c.classList.toggle('active', i === idx);
+      });
+      // Scroll active chip into view
+      const activeChip = document.querySelectorAll('.ex-chip')[idx];
+      if (activeChip) activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      updateHUD();
+    }
+
+    function updateHUD() {
+      const ex = EXERCISES[currentExIndex];
+      document.getElementById('hud-name').textContent = ex.name;
+      document.getElementById('hud-cue').textContent = ex.cue || '';
+    }
+
+    function togglePlayPause() {
+      isPlaying = !isPlaying;
+      document.getElementById('play-icon').textContent = isPlaying ? '⏸' : '▶';
+      document.getElementById('btn-play-pause').lastChild.textContent = isPlaying ? ' Pause Loop' : ' Resume Loop';
+    }
+
+    function animate(time) {
+      requestAnimationFrame(animate);
+      if (isPlaying) {
+        applyPoseTo3D(EXERCISES[currentExIndex], time);
+      }
+      renderer.render(scene, camera);
+    }
+
+    // Init
+    init3D();
+    setupUI();
+    animate(performance.now());
+  </script>
+</body>
+</html>
