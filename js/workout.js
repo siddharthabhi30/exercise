@@ -1,6 +1,6 @@
-// workout.js — Intelligent Circuit Generator with Movement Pattern & Muscle Balancing
-// Handles unilateral exercise duplication (Right Side -> Left Side paired sequence)
-// and prevents consecutive muscle fatigue.
+// workout.js — Intelligent Circuit Generator with Strict Zero-Equipment Floor Filtering
+// Guarantees no gym balls, pull-up bars, or benches in Bodyweight Only mode.
+// Features dedicated Love Handle & Oblique focus circuits and sequential Right/Left interval pairing.
 
 function buildWorkout(options = {}) {
   const {
@@ -14,23 +14,32 @@ function buildWorkout(options = {}) {
   const totalCycleSeconds = workSeconds + restSeconds;
   const numRounds = Math.max(4, Math.floor((minutes * 60) / totalCycleSeconds));
 
-  // Filter pool by kettlebell equipment setting
+  // Strict Equipment Filtering
   let pool = EXERCISES.filter(ex => {
-    if (!kb && ex.kb) return false;
+    if (!kb) {
+      // In Bodyweight Only mode: 100% Floor / Mat ONLY (Zero Equipment)
+      // Excludes kettlebells, stability/swiss/medicine balls, pull-up/chin-up bars, benches, chairs, bands
+      if (ex.kb) return false;
+      if (ex.needsEquipment) return false;
+      if (typeof isZeroEquipmentFloor === 'function' && !isZeroEquipmentFloor(ex)) return false;
+      if (ex.equipment && ex.equipment !== 'none' && ex.equipment !== 'bodyweight') return false;
+      return true;
+    }
     return true;
   });
 
   if (pool.length === 0) {
-    pool = EXERCISES.filter(ex => !ex.kb);
+    pool = EXERCISES.filter(ex => !ex.kb && (!ex.needsEquipment || ex.equipment === 'none'));
   }
 
-  // Pre-categorize pools by functional movement & group
+  // Pre-categorize functional pools
   const lowerHinge = pool.filter(e => e.movement === 'hinge');
   const lowerSquatLunge = pool.filter(e => e.movement === 'squat' || e.movement === 'lunge');
   const upperPush = pool.filter(e => e.movement === 'push');
   const upperPull = pool.filter(e => e.movement === 'pull');
   const coreAntExt = pool.filter(e => e.group === 'core' && e.movement === 'anti_extension');
-  const coreObliques = pool.filter(e => e.group === 'core' && (e.movement === 'rotation' || e.movement === 'lateral' || e.sub === 'oblique'));
+  const coreObliques = pool.filter(e => e.group === 'core' && (e.movement === 'rotation' || e.movement === 'lateral' || e.sub === 'oblique' || e.isLoveHandle));
+  const loveHandlePool = pool.filter(e => e.isLoveHandle || e.sub === 'oblique' || (e.primaryMuscles && e.primaryMuscles.includes('obliques')));
   const cardioPool = pool.filter(e => e.movement === 'cardio' || e.group === 'full');
 
   // Muscle Fatigue Check: Detect overlapping primary muscles
@@ -111,25 +120,33 @@ function buildWorkout(options = {}) {
       // Lower Focus: Knee-dominant -> Hip-dominant -> Lateral/Abductor -> Cardio/Glute
       if (step === 0) targetPool = lowerSquatLunge.length ? lowerSquatLunge : pool;
       else if (step === 1) targetPool = lowerHinge.length ? lowerHinge : pool;
-      else if (step === 2) targetPool = pool.filter(e => e.movement === 'lateral' || e.primaryMuscles.includes('abductors') || e.group === 'core');
+      else if (step === 2) targetPool = pool.filter(e => e.movement === 'lateral' || (e.primaryMuscles && e.primaryMuscles.includes('abductors')) || e.group === 'core');
       else targetPool = cardioPool.length ? cardioPool : lowerSquatLunge;
     } else if (focus === 'core') {
-      // Core Focus: Anterior Core -> Lateral Oblique -> Rotational Oblique -> Dynamic Core Cardio
-      if (step === 0) targetPool = coreAntExt.length ? coreAntExt : pool;
-      else if (step === 1) targetPool = coreObliques.filter(e => e.movement === 'lateral');
-      else if (step === 2) targetPool = coreObliques.filter(e => e.movement === 'rotation');
-      else targetPool = cardioPool.length ? cardioPool : coreAntExt;
+      // Core & Dedicated Love Handle Focus:
+      // Step 0: Anterior Core / Upper Abs (Plank, 3/4 Sit-Up)
+      // Step 1: Direct Lateral Love Handle Flexion (Alternate Heel Touchers, Side Plank, Floor Oblique Crunch, 45 Side Bend)
+      // Step 2: Rotational Love Handle Torque (Russian Twist, Cross-Body Crunch, Air Bike, Kettlebell Windmill)
+      // Step 3: Dynamic Oblique / Hip Abduction / Core Cardio (Side Bridge Abduction, Plank Twists, Push-Up Side Plank)
+      const lateralLoveHandles = loveHandlePool.filter(e => e.movement === 'lateral');
+      const rotationalLoveHandles = loveHandlePool.filter(e => e.movement === 'rotation');
+      const dynamicLoveHandles = pool.filter(e => e.isLoveHandle || e.movement === 'cardio');
+
+      if (step === 0) targetPool = coreAntExt.length ? coreAntExt : pool.filter(e => e.group === 'core');
+      else if (step === 1) targetPool = lateralLoveHandles.length ? lateralLoveHandles : (coreObliques.length ? coreObliques : pool);
+      else if (step === 2) targetPool = rotationalLoveHandles.length ? rotationalLoveHandles : (coreObliques.length ? coreObliques : pool);
+      else targetPool = dynamicLoveHandles.length ? dynamicLoveHandles : (coreObliques.length ? coreObliques : pool);
     } else if (focus === 'upper') {
-      // Upper Focus: Horizontal Push -> Vertical Push -> Pull / Upper Back -> Core/Cardio
+      // Upper Focus: Horizontal Push -> Vertical Push / Triceps -> Pull / Upper Back -> Core / Oblique
       if (step === 0) targetPool = upperPush.filter(e => e.target.toLowerCase().includes('chest') || e.id === 'pushup');
-      else if (step === 1) targetPool = upperPush.filter(e => e.movement === 'push');
+      else if (step === 1) targetPool = upperPush.filter(e => e.movement === 'push' || (e.primaryMuscles && e.primaryMuscles.includes('triceps')));
       else if (step === 2) targetPool = upperPull.length ? upperPull : upperPush;
-      else targetPool = coreAntExt.length ? coreAntExt : cardioPool;
+      else targetPool = loveHandlePool.length ? loveHandlePool : (coreAntExt.length ? coreAntExt : cardioPool);
     } else {
-      // Full Body Balanced Circuit: Lower (Hinge/Squat) -> Upper (Push/Pull) -> Core (Oblique/Abs) -> Cardio
+      // Full Body Balanced Circuit: Lower (Hinge/Squat) -> Upper (Push/Pull) -> Core (Love Handles & Obliques) -> Cardio
       if (step === 0) targetPool = [...lowerHinge, ...lowerSquatLunge];
       else if (step === 1) targetPool = [...upperPush, ...upperPull];
-      else if (step === 2) targetPool = [...coreObliques, ...coreAntExt];
+      else if (step === 2) targetPool = loveHandlePool.length ? loveHandlePool : [...coreObliques, ...coreAntExt];
       else targetPool = cardioPool.length ? cardioPool : pool;
     }
 

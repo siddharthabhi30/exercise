@@ -1,5 +1,7 @@
 // exercises.js — Verified HIIT Exercise Library with Rich Muscular & Movement Tags
 // All URLs are verified directly from ExerciseGymGifsDB (jsDelivr CDN + raw GitHub fallbacks).
+// Strictly filters out apparatus (pull-up bars, gym balls, benches) for 100% floor zero-equipment bodyweight.
+// Features dedicated side love handle and oblique exercises.
 
 const VERIFIED_EXERCISES = [
   // =========================================================================
@@ -10,6 +12,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Swing',
     group: 'legs',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: false,
     movement: 'hinge',
     primaryMuscles: ['glutes', 'hamstrings'],
@@ -24,6 +28,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Goblet Squat',
     group: 'legs',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: false,
     movement: 'squat',
     primaryMuscles: ['quads', 'glutes'],
@@ -38,6 +44,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Deadlift',
     group: 'legs',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: false,
     movement: 'hinge',
     primaryMuscles: ['hamstrings', 'glutes', 'lower_back'],
@@ -52,6 +60,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Sumo Squat',
     group: 'legs',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: false,
     movement: 'squat',
     primaryMuscles: ['adductors', 'glutes'],
@@ -66,6 +76,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Reverse Lunge',
     group: 'legs',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: true,
     movement: 'lunge',
     primaryMuscles: ['quads', 'glutes'],
@@ -82,6 +94,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Single-Leg Deadlift',
     group: 'legs',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: true,
     movement: 'hinge',
     primaryMuscles: ['hamstrings', 'glutes'],
@@ -95,13 +109,15 @@ const VERIFIED_EXERCISES = [
   },
 
   // =========================================================================
-  // LEGS — BODYWEIGHT
+  // LEGS — BODYWEIGHT (100% Zero-Equipment Floor / Mat Only)
   // =========================================================================
   {
     id: 'air_squat',
     name: 'Air Squat',
     group: 'legs',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     easy: true,
     movement: 'squat',
@@ -117,6 +133,8 @@ const VERIFIED_EXERCISES = [
     name: 'Jump Squat',
     group: 'legs',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'squat',
     primaryMuscles: ['quads', 'calves'],
@@ -131,6 +149,8 @@ const VERIFIED_EXERCISES = [
     name: 'Forward / Reverse Lunge',
     group: 'legs',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: true,
     movement: 'lunge',
     primaryMuscles: ['quads', 'glutes'],
@@ -147,6 +167,8 @@ const VERIFIED_EXERCISES = [
     name: 'Glute Bridge',
     group: 'legs',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'hinge',
     primaryMuscles: ['glutes', 'hamstrings'],
@@ -161,11 +183,14 @@ const VERIFIED_EXERCISES = [
     name: 'Side Bridge Hip Abduction',
     group: 'legs',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: true,
     sub: 'oblique',
+    isLoveHandle: true,
     movement: 'lateral',
-    primaryMuscles: ['abductors', 'obliques'],
-    target: 'Hip Abductors & Obliques',
+    primaryMuscles: ['obliques', 'abductors'],
+    target: 'Love Handles & Hip Abductors',
     cue: 'Hold side bridge position, lift top leg upward with toes pointed forward.',
     cueRight: 'Supporting on right forearm — raise top left leg toward the ceiling with controlled tempo.',
     cueLeft: 'Supporting on left forearm — raise top right leg toward the ceiling with controlled tempo.',
@@ -175,14 +200,17 @@ const VERIFIED_EXERCISES = [
   },
 
   // =========================================================================
-  // CORE & OBLIQUES — KETTLEBELL
+  // CORE & LOVE HANDLES / OBLIQUES — KETTLEBELL
   // =========================================================================
   {
     id: 'kb_windmill',
     name: 'Kettlebell Windmill',
     group: 'core',
     sub: 'oblique',
+    isLoveHandle: true,
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: true,
     movement: 'rotation',
     primaryMuscles: ['obliques', 'hamstrings', 'deltoids'],
@@ -190,33 +218,57 @@ const VERIFIED_EXERCISES = [
     cue: 'Lock eyes on overhead kettlebell, push hip back, slide opposite hand down to ankle.',
     cueRight: 'Right arm locked overhead — push right hip out, slide left fingertips down to inside of left ankle.',
     cueLeft: 'Left arm locked overhead — push left hip out, slide right fingertips down to inside of right ankle.',
+    file: 'abs/kettlebell-windmill.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/kettlebell-windmill.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/kettlebell-windmill.gif'
+  },
+  {
+    id: 'kb_adv_windmill',
+    name: 'Kettlebell Advanced Windmill',
+    group: 'core',
+    sub: 'oblique',
+    isLoveHandle: true,
+    kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
+    unilateral: true,
+    movement: 'rotation',
+    primaryMuscles: ['obliques', 'hamstrings', 'deltoids'],
+    target: 'Lateral Obliques & Love Handles',
+    cue: 'Keep eyes tracked on overhead weight, hinge and rotate torso smoothly down to floor.',
+    cueRight: 'Right arm overhead — push hip back and rotate torso, reaching left fingertips to floor.',
+    cueLeft: 'Left arm overhead — push hip back and rotate torso, reaching right fingertips to floor.',
     file: 'abs/kettlebell-advanced-windmill.gif',
     gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/kettlebell-advanced-windmill.gif',
     fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/kettlebell-advanced-windmill.gif'
   },
   {
-    id: 'kb_side_bend',
-    name: 'Kettlebell Suitcase Side Bend',
+    id: 'kb_renegade_row',
+    name: 'Kettlebell Alternating Renegade Row',
     group: 'core',
     sub: 'oblique',
+    isLoveHandle: true,
     kb: true,
-    unilateral: true,
-    movement: 'lateral',
-    primaryMuscles: ['obliques'],
-    target: 'Lateral Obliques & Love Handles',
-    cue: 'Lower weight down side of thigh, contract opposite oblique to pull back to center.',
-    cueRight: 'Kettlebell held in right hand — lower along right knee, contract left oblique to pull upright.',
-    cueLeft: 'Kettlebell held in left hand — lower along left knee, contract right oblique to pull upright.',
-    file: 'abs/kettlebell-side-bend.gif',
-    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/kettlebell-side-bend.gif',
-    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/kettlebell-side-bend.gif'
+    equipment: 'kettlebell',
+    needsEquipment: true,
+    unilateral: false,
+    movement: 'pull',
+    primaryMuscles: ['obliques', 'lats', 'deep_core'],
+    target: 'Anti-Rotation Obliques & Core',
+    cue: 'Hold rigid push-up plank, row kettlebell back to hip without twisting pelvis.',
+    file: 'upper-back/kettlebell-alternating-renegade-row.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/kettlebell-alternating-renegade-row.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/upper-back/kettlebell-alternating-renegade-row.gif'
   },
   {
     id: 'kb_bent_press',
     name: 'Kettlebell Bent Press',
     group: 'core',
     sub: 'oblique',
+    isLoveHandle: true,
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: true,
     movement: 'rotation',
     primaryMuscles: ['obliques', 'deltoids', 'deep_core'],
@@ -233,6 +285,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Sit-Up',
     group: 'core',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: false,
     movement: 'anti_extension',
     primaryMuscles: ['abs'],
@@ -244,45 +298,115 @@ const VERIFIED_EXERCISES = [
   },
 
   // =========================================================================
-  // CORE & OBLIQUES — BODYWEIGHT
+  // CORE & LOVE HANDLES / OBLIQUES — BODYWEIGHT (100% Floor / Mat Only)
   // =========================================================================
   {
-    id: 'plank',
-    name: 'Forearm Plank',
-    group: 'core',
-    kb: false,
-    unilateral: false,
-    movement: 'anti_extension',
-    primaryMuscles: ['abs', 'deep_core'],
-    target: 'Entire Core & Transverse Abs',
-    cue: 'Maintain a rigid straight line from head to heels, squeeze glutes and pull belly to spine.',
-    file: 'abs/plank.gif',
-    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/plank.gif',
-    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/plank.gif'
-  },
-  {
-    id: 'side_plank',
-    name: 'Side Plank',
+    id: 'alternate_heel_touchers',
+    name: 'Alternate Heel Touchers (Penguins)',
     group: 'core',
     sub: 'oblique',
+    isLoveHandle: true,
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: false,
+    movement: 'lateral',
+    primaryMuscles: ['obliques'],
+    target: 'Direct Love Handles & Flanks',
+    cue: 'Shoulders raised slightly off mat, reach right hand to right heel, then left to left with constant oblique squeeze.',
+    file: 'abs/alternate-heel-touchers.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/alternate-heel-touchers.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/alternate-heel-touchers.gif'
+  },
+  {
+    id: 'cross_body_crunch',
+    name: 'Cross-Body Oblique Crunch',
+    group: 'core',
+    sub: 'oblique',
+    isLoveHandle: true,
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: true,
+    movement: 'rotation',
+    primaryMuscles: ['obliques', 'abs'],
+    target: 'Obliques & Love Handles',
+    cue: 'Rotate torso across your midline, driving opposite elbow to knee and squeezing waistline.',
+    cueRight: 'Right elbow to left knee — twist shoulder across body, contract right side obliques firmly.',
+    cueLeft: 'Left elbow to right knee — twist shoulder across body, contract left side obliques firmly.',
+    file: 'abs/cross-body-crunch.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/cross-body-crunch.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/cross-body-crunch.gif'
+  },
+  {
+    id: 'side_bridge_plank',
+    name: 'Side Plank / Side Bridge',
+    group: 'core',
+    sub: 'oblique',
+    isLoveHandle: true,
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: true,
     movement: 'lateral',
     primaryMuscles: ['obliques'],
-    target: 'Obliques & Lateral Core',
-    cue: 'Stack feet, elevate hips into a straight diagonal line, reach top arm high.',
-    cueRight: 'Right forearm down — lift right hip high off mat, stack left foot, reach left hand upward.',
-    cueLeft: 'Left forearm down — lift left hip high off mat, stack right foot, reach right hand upward.',
-    file: 'abs/side-plank.gif',
-    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/side-plank.gif',
-    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/side-plank.gif'
+    target: 'Lateral Obliques & Waistline',
+    cue: 'Stack feet, elevate hips into a straight diagonal line, hold tight contraction in lower waist.',
+    cueRight: 'Right forearm down — lift right hip high off mat, contract right oblique, reach left hand upward.',
+    cueLeft: 'Left forearm down — lift left hip high off mat, contract left oblique, reach right hand upward.',
+    file: 'abs/side-bridge-v-2.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/side-bridge-v-2.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/side-bridge-v-2.gif'
+  },
+  {
+    id: 'oblique_crunches_floor',
+    name: 'Lying Side Oblique Crunch',
+    group: 'core',
+    sub: 'oblique',
+    isLoveHandle: true,
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: true,
+    movement: 'lateral',
+    primaryMuscles: ['obliques'],
+    target: 'Deep Love Handles & Lateral Core',
+    cue: 'Lie on your side with knees slightly bent, curl upper ribs toward hip bone to compress oblique.',
+    cueRight: 'Lying on right side — curl left ribs toward hip, squeeze left love handle at peak.',
+    cueLeft: 'Lying on left side — curl right ribs toward hip, squeeze right love handle at peak.',
+    file: 'abs/oblique-crunches-floor.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/oblique-crunches-floor.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/oblique-crunches-floor.gif'
+  },
+  {
+    id: 'side_bend_bodyweight',
+    name: '45° Standing Oblique Reach',
+    group: 'core',
+    sub: 'oblique',
+    isLoveHandle: true,
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: true,
+    movement: 'lateral',
+    primaryMuscles: ['obliques'],
+    target: 'Obliques & Flank Sculpting',
+    cue: 'Controlled lateral bend, squeeze side oblique tightly at peak contraction.',
+    cueRight: 'Bending to the right side — reach right hand low, contract right oblique at bottom.',
+    cueLeft: 'Bending to the left side — reach left hand low, contract left oblique at bottom.',
+    file: 'abs/45-side-bend.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/45-side-bend.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/45-side-bend.gif'
   },
   {
     id: 'air_bike',
     name: 'Bicycle Crunches (Air Bike)',
     group: 'core',
     sub: 'oblique',
+    isLoveHandle: true,
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'rotation',
     primaryMuscles: ['obliques', 'abs'],
@@ -297,7 +421,10 @@ const VERIFIED_EXERCISES = [
     name: 'Russian Twist',
     group: 'core',
     sub: 'oblique',
+    isLoveHandle: true,
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'rotation',
     primaryMuscles: ['obliques', 'abs'],
@@ -308,25 +435,84 @@ const VERIFIED_EXERCISES = [
     fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/assisted-motion-russian-twist.gif'
   },
   {
-    id: 'heel_taps',
-    name: 'Alternate Heel Touchers',
+    id: 'front_plank_twist',
+    name: 'Plank Hip Dips / Twists',
     group: 'core',
     sub: 'oblique',
+    isLoveHandle: true,
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
-    movement: 'lateral',
-    primaryMuscles: ['obliques'],
-    target: 'Obliques & Love Handles',
-    cue: 'Shoulders raised slightly off mat, reach right hand to right heel, then left to left.',
-    file: 'abs/alternate-heel-touchers.gif',
-    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/alternate-heel-touchers.gif',
-    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/alternate-heel-touchers.gif'
+    movement: 'rotation',
+    primaryMuscles: ['obliques', 'abs'],
+    target: 'Lower Obliques & Waistline',
+    cue: 'Hold rigid forearm plank, rotate hips smoothly side-to-side grazing the floor.',
+    file: 'abs/front-plank-with-twist.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/front-plank-with-twist.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/front-plank-with-twist.gif'
+  },
+  {
+    id: 'pushup_side_plank',
+    name: 'Push-Up to Side Plank',
+    group: 'core',
+    sub: 'oblique',
+    isLoveHandle: true,
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: true,
+    movement: 'rotation',
+    primaryMuscles: ['obliques', 'chest', 'deltoids'],
+    target: 'Obliques & Upper Body',
+    cue: 'Complete push-up, rotate torso open into side plank reaching top arm to the sky.',
+    cueRight: 'Push up, rotate open to the right side — reach right hand straight up to the ceiling.',
+    cueLeft: 'Push up, rotate open to the left side — reach left hand straight up to the ceiling.',
+    file: 'abs/push-up-to-side-plank.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/push-up-to-side-plank.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/push-up-to-side-plank.gif'
+  },
+  {
+    id: 'crab_twist_toe_touch',
+    name: 'Crab Twist Toe Touch',
+    group: 'core',
+    sub: 'oblique',
+    isLoveHandle: true,
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: false,
+    movement: 'rotation',
+    primaryMuscles: ['obliques', 'glutes'],
+    target: 'Rotational Obliques & Core',
+    cue: 'In crab position, reach opposite hand across to touch opposite toe with hip drive.',
+    file: 'abs/crab-twist-toe-touch.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/crab-twist-toe-touch.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/crab-twist-toe-touch.gif'
+  },
+  {
+    id: 'plank',
+    name: 'Forearm Plank',
+    group: 'core',
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: false,
+    movement: 'anti_extension',
+    primaryMuscles: ['abs', 'deep_core'],
+    target: 'Entire Core & Transverse Abs',
+    cue: 'Maintain a rigid straight line from head to heels, squeeze glutes and pull belly to spine.',
+    file: 'abs/plank.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/plank.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/plank.gif'
   },
   {
     id: 'mountain_climbers',
     name: 'Mountain Climbers',
     group: 'core',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'cardio',
     primaryMuscles: ['abs', 'hip_flexors', 'cardio'],
@@ -337,27 +523,12 @@ const VERIFIED_EXERCISES = [
     fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/mountain-climber.gif'
   },
   {
-    id: 'side_bend_bodyweight',
-    name: '45° Side Bend',
-    group: 'core',
-    sub: 'oblique',
-    kb: false,
-    unilateral: true,
-    movement: 'lateral',
-    primaryMuscles: ['obliques'],
-    target: 'Obliques & Love Handles',
-    cue: 'Controlled lateral bend, squeeze side oblique tightly at peak contraction.',
-    cueRight: 'Bending to the right side — reach right hand low, contract right oblique at bottom.',
-    cueLeft: 'Bending to the left side — reach left hand low, contract left oblique at bottom.',
-    file: 'abs/45-side-bend.gif',
-    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/45-side-bend.gif',
-    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/abs/45-side-bend.gif'
-  },
-  {
     id: 'sit_up_3_4',
     name: '3/4 Sit-Up',
     group: 'core',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'anti_extension',
     primaryMuscles: ['abs'],
@@ -376,6 +547,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Overhead Press',
     group: 'upper',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: true,
     movement: 'push',
     primaryMuscles: ['deltoids', 'triceps'],
@@ -392,6 +565,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Bent-Over Row',
     group: 'upper',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: true,
     movement: 'pull',
     primaryMuscles: ['lats', 'upper_back', 'biceps'],
@@ -408,6 +583,8 @@ const VERIFIED_EXERCISES = [
     name: 'Kettlebell Push Press',
     group: 'upper',
     kb: true,
+    equipment: 'kettlebell',
+    needsEquipment: true,
     unilateral: true,
     movement: 'push',
     primaryMuscles: ['deltoids', 'triceps', 'quads'],
@@ -421,13 +598,15 @@ const VERIFIED_EXERCISES = [
   },
 
   // =========================================================================
-  // UPPER BODY — BODYWEIGHT
+  // UPPER BODY — BODYWEIGHT (100% Floor / Mat Zero-Equipment)
   // =========================================================================
   {
     id: 'pushup',
     name: 'Standard Push-Up',
     group: 'upper',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'push',
     primaryMuscles: ['chest', 'triceps', 'deltoids'],
@@ -438,10 +617,44 @@ const VERIFIED_EXERCISES = [
     fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/chest/push-up.gif'
   },
   {
+    id: 'diamond_pushup',
+    name: 'Diamond Push-Up',
+    group: 'upper',
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: false,
+    movement: 'push',
+    primaryMuscles: ['triceps', 'chest'],
+    target: 'Triceps & Inner Chest',
+    cue: 'Hands touching in diamond shape directly under chest, keep elbows tucked close to ribs.',
+    file: 'triceps/diamond-push-up.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/diamond-push-up.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/triceps/diamond-push-up.gif'
+  },
+  {
+    id: 'close_grip_pushup',
+    name: 'Close Grip Push-Up',
+    group: 'upper',
+    kb: false,
+    equipment: 'none',
+    needsEquipment: false,
+    unilateral: false,
+    movement: 'push',
+    primaryMuscles: ['triceps', 'chest'],
+    target: 'Triceps Lockout & Chest',
+    cue: 'Hands shoulder-width apart, track elbows straight back scraping against your ribcage.',
+    file: 'triceps/close-grip-push-up.gif',
+    gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/close-grip-push-up.gif',
+    fallbackGif: 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/main/triceps/close-grip-push-up.gif'
+  },
+  {
     id: 'pike_pushup',
     name: 'Pike Push-Up',
     group: 'upper',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'push',
     primaryMuscles: ['deltoids', 'triceps'],
@@ -456,10 +669,12 @@ const VERIFIED_EXERCISES = [
     name: 'Chair / Bench Dips',
     group: 'upper',
     kb: false,
+    equipment: 'bench',
+    needsEquipment: true,
     unilateral: false,
     movement: 'push',
     primaryMuscles: ['triceps', 'chest'],
-    target: 'Triceps',
+    target: 'Triceps (Requires Bench / Chair)',
     cue: 'Hands on bench behind you, lower hips until elbows hit 90°, press up through palms.',
     file: 'triceps/bench-dip.gif',
     gif: 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/bench-dip.gif',
@@ -467,13 +682,15 @@ const VERIFIED_EXERCISES = [
   },
 
   // =========================================================================
-  // CARDIO / FULL BODY
+  // CARDIO / FULL BODY (100% Floor / Mat Zero-Equipment)
   // =========================================================================
   {
     id: 'burpee',
     name: 'Burpee',
     group: 'full',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'cardio',
     primaryMuscles: ['full_body', 'cardio'],
@@ -488,6 +705,8 @@ const VERIFIED_EXERCISES = [
     name: 'Jumping Jacks',
     group: 'full',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     easy: true,
     movement: 'cardio',
@@ -503,6 +722,8 @@ const VERIFIED_EXERCISES = [
     name: 'High Knees Run',
     group: 'full',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'cardio',
     primaryMuscles: ['hip_flexors', 'cardio'],
@@ -517,6 +738,8 @@ const VERIFIED_EXERCISES = [
     name: 'Skater Hops',
     group: 'full',
     kb: false,
+    equipment: 'none',
+    needsEquipment: false,
     unilateral: false,
     movement: 'lateral',
     primaryMuscles: ['glutes', 'abductors', 'cardio'],
@@ -531,6 +754,60 @@ const VERIFIED_EXERCISES = [
 const CURATED_EXERCISES = VERIFIED_EXERCISES;
 let EXERCISES = [...VERIFIED_EXERCISES];
 
+// ===========================================================================
+// EQUIPMENT DETECTION & PURIFICATION ENGINE
+// Identifies balls, pull-up/chin-up bars, benches, and apparatus so pure
+// bodyweight mode is 100% floor / mat only.
+// ===========================================================================
+function detectEquipment(name = '', file = '', instructions = [], bodyPart = '', muscle = '') {
+  const instrStr = Array.isArray(instructions) ? instructions.join(' ') : (instructions || '');
+  const text = `${name} ${file} ${instrStr} ${bodyPart} ${muscle}`.toLowerCase();
+
+  // 1. Balls (swiss ball, stability ball, medicine ball, exercise ball, bosu ball, slam ball)
+  if (/\b(ball|swiss|bosu|medicine|sphere)\b/i.test(text)) {
+    return 'ball';
+  }
+
+  // 2. Bars & Pulling Apparatus (pull-up, chin-up, chin, pulling, hanging, hang, parallel bar, dip bar, horizontal bar, trapeze, rings, ladder, rack, tower)
+  if (/\b(pull[\s-]?up|chin[\s-]?up|chin|pulling|hanging|hang|parallel\s*bar|dip\s*bar|horizontal\s*bar|ladder|rack|tower|trapeze|rings?)\b/i.test(text)) {
+    return 'pullup_bar';
+  }
+  if (/\b(bar|bars)\b/i.test(text) && !text.includes('bear') && !text.includes('barrier')) {
+    return 'bar';
+  }
+
+  // 3. Furniture / Benches / Boxes / Chairs / Stools / Steps
+  if (/\b(bench|chair|box|table|stool|step[\s-]?up|step[\s-]?box)\b/i.test(text)) {
+    return 'bench';
+  }
+
+  // 4. Bands / Straps / Cables / Ropes / Wheels / Rollers / Stationary Bikes
+  if (/\b(band|elastic|strap|suspension|trx|cable|rope|pulley|roller|rollerout|wheel|ab\s*wheel|stationary[\s-]?bike)\b/i.test(text)) {
+    return 'apparatus';
+  }
+
+  // 5. Incline / Decline Benches / Wall apparatus
+  if (/\b(incline|decline|wall)\b/i.test(text)) {
+    return 'apparatus';
+  }
+
+  // 6. Free weights
+  if (/\b(kettlebell)\b/i.test(text)) return 'kettlebell';
+  if (/\b(dumbbell|barbell|weight|weighted|plate)\b/i.test(text)) return 'weights';
+
+  // Default pure floor bodyweight
+  return 'none';
+}
+
+function isZeroEquipmentFloor(ex) {
+  if (!ex) return false;
+  if (ex.kb) return false;
+  if (ex.needsEquipment) return false;
+  if (ex.equipment && ex.equipment !== 'none' && ex.equipment !== 'bodyweight') return false;
+  const eq = detectEquipment(ex.name, ex.file, ex.instructions || [ex.cue]);
+  return eq === 'none';
+}
+
 // Helpers to intelligently tag dynamic exercises from ExerciseGymGifsDB
 function inferMovementPattern(name = '', bodyPart = '', muscle = '') {
   const n = name.toLowerCase();
@@ -542,8 +819,8 @@ function inferMovementPattern(name = '', bodyPart = '', muscle = '') {
   if (n.includes('lunge') || n.includes('split squat') || n.includes('step up')) return 'lunge';
   if (n.includes('push') || n.includes('press') || n.includes('dip') || b.includes('chest') || m.includes('tricep')) return 'push';
   if (n.includes('row') || n.includes('pull') || m.includes('lat') || b.includes('back')) return 'pull';
-  if (n.includes('twist') || n.includes('windmill') || n.includes('air bike') || n.includes('bicycle')) return 'rotation';
-  if (n.includes('side') || n.includes('abduction') || n.includes('skater')) return 'lateral';
+  if (n.includes('twist') || n.includes('windmill') || n.includes('air bike') || n.includes('bicycle') || n.includes('cross body')) return 'rotation';
+  if (n.includes('side') || n.includes('abduction') || n.includes('skater') || n.includes('heel touch')) return 'lateral';
   if (n.includes('plank') || n.includes('sit-up') || n.includes('crunch') || b.includes('waist') || b.includes('abs')) return 'anti_extension';
   if (n.includes('jump') || n.includes('hop') || n.includes('burpee') || n.includes('run') || b.includes('cardio')) return 'cardio';
   return 'hinge';
@@ -573,7 +850,8 @@ function inferUnilateral(name = '') {
   const n = name.toLowerCase();
   return n.includes('one-arm') || n.includes('single') || n.includes('one-leg') || 
          n.includes('lunge') || n.includes('windmill') || n.includes('side bend') || 
-         n.includes('side plank') || n.includes('suitcase');
+         n.includes('side plank') || n.includes('suitcase') || n.includes('side bridge') ||
+         n.includes('cross body') || n.includes('cross-body');
 }
 
 // Asynchronously load the complete ExerciseGymGifsDB catalog on startup
@@ -587,10 +865,14 @@ function inferUnilateral(name = '') {
       fetch(bwUrl).then(r => r.json()).catch(() => null)
     ]);
 
-    const livePool = [];
+    const livePool = [...CURATED_EXERCISES];
+    const seenIds = new Set(livePool.map(e => e.id));
 
     if (kbRes && Array.isArray(kbRes.exercises)) {
       kbRes.exercises.forEach(e => {
+        const id = e.slug || e.id;
+        if (seenIds.has(id)) return;
+
         const bodyPart = (e.bodyPart || '').toLowerCase();
         let group = 'core';
         if (bodyPart.includes('leg') || bodyPart.includes('glute')) group = 'legs';
@@ -600,15 +882,22 @@ function inferUnilateral(name = '') {
         const isUnilateral = inferUnilateral(e.name);
         const movement = inferMovementPattern(e.name, e.bodyPart, e.muscle);
         const muscles = inferPrimaryMuscles(e.bodyPart, e.muscle);
+        const isLoveHandle = /\b(oblique|twist|side|waist|windmill)\b/i.test(`${e.name} ${e.muscle || ''} ${e.bodyPart || ''}`);
+        if (isLoveHandle && !muscles.includes('obliques')) muscles.push('obliques');
 
+        seenIds.add(id);
         livePool.push({
-          id: e.slug || e.id,
+          id: id,
           name: e.name,
           group: group,
           target: e.muscle || e.bodyPart,
           primaryMuscles: muscles,
           movement: movement,
+          sub: isLoveHandle ? 'oblique' : undefined,
+          isLoveHandle: isLoveHandle,
           kb: true,
+          equipment: 'kettlebell',
+          needsEquipment: true,
           unilateral: isUnilateral,
           cue: (e.instructions && e.instructions[0]) || 'Execute with clean form and controlled tempo.',
           cueRight: `Right side — ${(e.instructions && e.instructions[0]) || 'Execute with clean form.'}`,
@@ -622,6 +911,9 @@ function inferUnilateral(name = '') {
 
     if (bwRes && Array.isArray(bwRes.exercises)) {
       bwRes.exercises.forEach(e => {
+        const id = e.slug || e.id;
+        if (seenIds.has(id)) return;
+
         const bodyPart = (e.bodyPart || '').toLowerCase();
         let group = 'core';
         if (bodyPart.includes('leg') || bodyPart.includes('glute')) group = 'legs';
@@ -629,18 +921,29 @@ function inferUnilateral(name = '') {
         else if (bodyPart.includes('back') || bodyPart.includes('shoulder')) group = 'upper';
         else if (bodyPart.includes('cardio')) group = 'full';
 
+        const detected = detectEquipment(e.name, e.file, e.instructions || [], e.bodyPart, e.muscle);
+        const needsEquipment = detected !== 'none';
         const isUnilateral = inferUnilateral(e.name);
         const movement = inferMovementPattern(e.name, e.bodyPart, e.muscle);
         const muscles = inferPrimaryMuscles(e.bodyPart, e.muscle);
+        const isLoveHandle = /\b(oblique|twist|side|heel|waist|air\s*bike|cross\s*body|bridge\s*hip\s*abduction)\b/i.test(
+          `${e.name} ${e.muscle || ''} ${e.bodyPart || ''}`
+        );
+        if (isLoveHandle && !muscles.includes('obliques')) muscles.push('obliques');
 
+        seenIds.add(id);
         livePool.push({
-          id: e.slug || e.id,
+          id: id,
           name: e.name,
           group: group,
           target: e.muscle || e.bodyPart,
           primaryMuscles: muscles,
           movement: movement,
+          sub: isLoveHandle ? 'oblique' : undefined,
+          isLoveHandle: isLoveHandle,
           kb: false,
+          equipment: detected,
+          needsEquipment: needsEquipment,
           unilateral: isUnilateral,
           cue: (e.instructions && e.instructions[0]) || 'Execute with clean form and controlled tempo.',
           cueRight: `Right side — ${(e.instructions && e.instructions[0]) || 'Execute with clean form.'}`,
@@ -654,7 +957,7 @@ function inferUnilateral(name = '') {
 
     if (livePool.length > 50) {
       EXERCISES = livePool;
-      console.log(`Exercise database initialized with ${EXERCISES.length} tagged live exercises.`);
+      console.log(`Exercise database initialized with ${EXERCISES.length} tagged live exercises (${EXERCISES.filter(isZeroEquipmentFloor).length} zero-equipment floor movements).`);
     }
   } catch (err) {
     console.warn('Using offline verified exercise catalog:', err);
