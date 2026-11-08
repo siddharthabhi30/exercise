@@ -75,9 +75,15 @@
       <span>🔥</span>
     </button>
 
-    <div class="home-footer-links">
-      <a href="gallery.html">Explore Exercise Library & Demos (40+ Exercises) &rarr;</a>
-    </div>
+    <!-- Prominent Exercise Catalogue Button -->
+    <a href="gallery.html" class="btn-catalogue">
+      <div class="btn-catalogue-icon">📚</div>
+      <div class="btn-catalogue-info">
+        <div class="btn-catalogue-title">Browse Exercise Catalogue</div>
+        <div class="btn-catalogue-sub">500+ Animated GIFs, Technique & Filters</div>
+      </div>
+      <div class="btn-catalogue-arrow">&rarr;</div>
+    </a>
   </section>
 
 
@@ -88,11 +94,17 @@
     <div class="workout-header">
       <span class="workout-progress-pill" id="workout-progress-pill">Interval 1 of 20</span>
       <span class="workout-target-pill" id="workout-target-pill">Glutes</span>
-      <button class="btn-end-workout" id="btn-end-workout">End</button>
+      <div class="workout-header-actions">
+        <a href="gallery.html" target="_blank" class="btn-header-catalogue" title="Open Exercise Catalogue">📚 Catalogue</a>
+        <button class="btn-end-workout" id="btn-end-workout">End</button>
+      </div>
     </div>
 
     <!-- Mode Status: WORK vs REST -->
     <div class="mode-banner work" id="mode-banner">🔥 WORK</div>
+
+    <!-- Unilateral Side Pill: e.g. 👉 RIGHT SIDE or 👈 LEFT SIDE -->
+    <div class="side-indicator-pill" id="side-indicator-pill" style="display: none;"></div>
 
     <!-- Switch Sides Alert Banner for Unilateral Exercises -->
     <div class="switch-sides-banner" id="switch-sides-banner">
@@ -109,6 +121,7 @@
     <div class="exercise-meta">
       <div class="current-exercise-name" id="current-ex-name">Kettlebell Swing</div>
       <div class="current-exercise-cue" id="current-ex-cue">Hinge back deeply at the hips, snap glutes forward.</div>
+      <div class="exercise-tags" id="exercise-tags"></div>
     </div>
 
     <!-- Massive Timer Countdown (>= 25% Screen Height) -->
@@ -157,13 +170,25 @@
         </div>
       </div>
 
+      <!-- Movement Patterns & Balance Summary -->
+      <div class="done-breakdown-card" id="done-breakdown-card">
+        <div class="breakdown-title">Movement Patterns & Balance</div>
+        <div class="done-patterns-summary" id="done-patterns-summary"></div>
+      </div>
+
       <button class="btn-start" id="btn-done-restart" style="margin-top: 16px;">
         <span>START ANOTHER WORKOUT</span>
       </button>
 
-      <div class="home-footer-links" style="margin-top: 8px;">
-        <a href="gallery.html">Browse Exercise Library &rarr;</a>
-      </div>
+      <!-- Prominent Catalogue Button on Done Screen -->
+      <a href="gallery.html" class="btn-catalogue" style="margin-top: 12px;">
+        <div class="btn-catalogue-icon">📚</div>
+        <div class="btn-catalogue-info">
+          <div class="btn-catalogue-title">Explore Exercise Catalogue</div>
+          <div class="btn-catalogue-sub">500+ Animated Moves & Muscle Guides</div>
+        </div>
+        <div class="btn-catalogue-arrow">&rarr;</div>
+      </a>
     </div>
   </section>
 

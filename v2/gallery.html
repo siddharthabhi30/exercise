@@ -81,6 +81,20 @@
       border: 1px solid var(--card-border);
     }
 
+    .nav-back-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     /* Filters */
     .filters-bar {
       display: flex;
@@ -382,7 +396,10 @@
         Exercise Video & GIF Gallery
         <span class="badge-live">Live Fitness DB</span>
       </h1>
-      <span class="source-pill" id="counter-pill">Loading database...</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="source-pill" id="counter-pill">Loading database...</span>
+        <a href="index.html" class="nav-back-link">&larr; Back to Workout</a>
+      </div>
     </div>
 
     <div id="status-banner">
@@ -430,7 +447,7 @@
   <script src="js/exercises.js"></script>
   <script>
     // State
-    let databaseExercises = [...CURATED_EXERCISES];
+    let databaseExercises = (typeof VERIFIED_EXERCISES !== 'undefined') ? [...VERIFIED_EXERCISES] : [];
     let currentKbFilter = 'all';
     let currentGroupFilter = 'all';
     let searchQuery = '';
@@ -554,7 +571,7 @@
 
       document.getElementById('counter-pill').textContent = `${filtered.length} Exercises Showing`;
 
-      // Render first 100 for instant buttery smooth responsiveness, paginate on scroll if needed
+      // Render first 120 for instant buttery smooth responsiveness, paginate on scroll if needed
       const displayBatch = filtered.slice(0, 120);
 
       displayBatch.forEach(ex => {
@@ -626,6 +643,14 @@
         badges.innerHTML += ex.kb 
           ? `<span class="badge badge-kb">Kettlebell</span>` 
           : `<span class="badge badge-bodyweight">Bodyweight</span>`;
+
+        if (ex.movement) {
+          badges.innerHTML += `<span class="badge" style="background: rgba(168,85,247,0.18); color:#d8b4fe;">${ex.movement.toUpperCase()}</span>`;
+        }
+
+        if (ex.unilateral) {
+          badges.innerHTML += `<span class="badge" style="background: rgba(251,146,60,0.18); color:#fdba74;">R/L Paired</span>`;
+        }
 
         if (ex.muscle) {
           badges.innerHTML += `<span class="badge badge-muscle">${ex.muscle}</span>`;

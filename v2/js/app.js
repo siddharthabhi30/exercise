@@ -128,12 +128,14 @@
   const elProgressPill = document.getElementById('workout-progress-pill');
   const elTargetPill = document.getElementById('workout-target-pill');
   const elModeBanner = document.getElementById('mode-banner');
+  const elSideIndicator = document.getElementById('side-indicator-pill');
   const elSwitchSidesBanner = document.getElementById('switch-sides-banner');
   const elDemoFrame = document.querySelector('.demo-frame');
   const elDemoImg = document.getElementById('workout-demo-img');
   const elNextLabel = document.getElementById('demo-next-label');
   const elExName = document.getElementById('current-ex-name');
   const elExCue = document.getElementById('current-ex-cue');
+  const elTags = document.getElementById('exercise-tags');
   const elCountdown = document.getElementById('timer-countdown');
   const elProgressFill = document.getElementById('progress-bar-fill');
   const btnPauseResume = document.getElementById('btn-pause-resume');
@@ -186,14 +188,48 @@
     // Header info
     elProgressPill.textContent = `Interval ${interval.round} of ${interval.totalRounds}`;
 
-    // Hide halfway banner
+    // Hide halfway switch banner by default
     elSwitchSidesBanner.classList.remove('active');
 
     if (isWork) {
       const ex = interval.exercise;
-      elTargetPill.textContent = ex.target || ex.group;
-      elExName.textContent = ex.name;
-      elExCue.textContent = ex.cue || '';
+      elTargetPill.textContent = interval.target || ex.target || ex.group;
+      elExName.textContent = interval.name || ex.name;
+      elExCue.textContent = interval.cue || ex.cue || '';
+
+      // Unilateral Side Indicator
+      if (interval.side) {
+        elSideIndicator.style.display = 'flex';
+        elSideIndicator.className = 'side-indicator-pill ' + interval.side;
+        elSideIndicator.textContent = interval.sideLabel || (interval.side === 'right' ? '👉 RIGHT SIDE' : '👈 LEFT SIDE');
+      } else {
+        elSideIndicator.style.display = 'none';
+        elSideIndicator.className = 'side-indicator-pill';
+        elSideIndicator.textContent = '';
+      }
+
+      // Exercise Tags
+      elTags.innerHTML = '';
+      if (interval.movement) {
+        const mSpan = document.createElement('span');
+        mSpan.className = 'tag-pill movement';
+        mSpan.textContent = interval.movement;
+        elTags.appendChild(mSpan);
+      }
+      if (interval.primaryMuscles && interval.primaryMuscles.length) {
+        interval.primaryMuscles.slice(0, 2).forEach(m => {
+          const musSpan = document.createElement('span');
+          musSpan.className = 'tag-pill muscle';
+          musSpan.textContent = m.replace('_', ' ');
+          elTags.appendChild(musSpan);
+        });
+      }
+      if (ex.kb) {
+        const kbSpan = document.createElement('span');
+        kbSpan.className = 'tag-pill equipment';
+        kbSpan.textContent = 'Kettlebell';
+        elTags.appendChild(kbSpan);
+      }
 
       // Demo frame styling during WORK: full opacity, no rest overlay
       elDemoFrame.classList.remove('resting');
@@ -202,19 +238,38 @@
       // Load active exercise demo GIF
       elDemoImg.src = ex.gif;
     } else {
-      const next = interval.nextExercise;
+      // REST INTERVAL
+      const nextWork = interval.nextInterval;
+      const nextEx = interval.nextExercise;
+
       elTargetPill.textContent = 'RESTING';
       elExName.textContent = 'Rest & Breathe';
-      elExCue.textContent = next ? `Next Exercise: ${next.name} (${next.cue || ''})` : 'Final rest of the workout!';
+
+      // Hide side indicator & tags during rest
+      elSideIndicator.style.display = 'none';
+      elTags.innerHTML = '';
+
+      if (nextWork) {
+        const sideNotice = nextWork.sideLabel ? ` (${nextWork.sideLabel})` : '';
+        elExCue.textContent = `Up Next: ${nextWork.name}${sideNotice} — ${nextWork.cue || ''}`;
+        elNextLabel.style.display = 'block';
+        elNextLabel.textContent = `☕ REST NOW — UP NEXT: ${nextWork.name}`;
+      } else if (nextEx) {
+        elExCue.textContent = `Up Next: ${nextEx.name} — ${nextEx.cue || ''}`;
+        elNextLabel.style.display = 'block';
+        elNextLabel.textContent = `☕ REST NOW — UP NEXT: ${nextEx.name}`;
+      } else {
+        elExCue.textContent = 'Final rest of the workout!';
+        elNextLabel.style.display = 'block';
+        elNextLabel.textContent = 'REST NOW';
+      }
 
       // Demo frame styling during REST: dimmed preview showing what's UP NEXT
       elDemoFrame.classList.add('resting');
-      elNextLabel.style.display = 'block';
-      elNextLabel.textContent = next ? `☕ REST NOW — UP NEXT: ${next.name}` : 'REST NOW';
 
       // Show preview of next exercise
-      if (next && next.gif) {
-        elDemoImg.src = next.gif;
+      if (nextEx && nextEx.gif) {
+        elDemoImg.src = nextEx.gif;
       }
     }
   };
@@ -229,7 +284,7 @@
   };
 
   timer.onHalfway = function(interval) {
-    // Unilateral move switch sides alert
+    // Only used if an interval explicitly requests halfway split
     elSwitchSidesBanner.classList.add('active');
     setTimeout(() => {
       elSwitchSidesBanner.classList.remove('active');
@@ -294,6 +349,27 @@
     document.getElementById('done-stat-calories').textContent = `${estimatedCalories} kcal`;
     document.getElementById('done-stat-intervals').textContent = `${stats.workIntervals} rounds`;
     document.getElementById('done-stat-focus').textContent = settings.focus.toUpperCase();
+
+    // Movement Pattern Breakdown Summary
+    const patternCounts = {};
+    if (currentWorkout && currentWorkout.intervals) {
+      currentWorkout.intervals.forEach(i => {
+        if (i.type === 'work' && i.movement) {
+          patternCounts[i.movement] = (patternCounts[i.movement] || 0) + 1;
+        }
+      });
+    }
+
+    const summaryContainer = document.getElementById('done-patterns-summary');
+    if (summaryContainer) {
+      summaryContainer.innerHTML = '';
+      Object.entries(patternCounts).forEach(([pattern, count]) => {
+        const chip = document.createElement('div');
+        chip.className = 'done-pattern-chip';
+        chip.innerHTML = `<span class="count">${count}x</span> ${pattern.toUpperCase()}`;
+        summaryContainer.appendChild(chip);
+      });
+    }
 
     showScreen('done');
   }

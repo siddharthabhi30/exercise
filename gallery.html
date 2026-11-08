@@ -644,6 +644,14 @@
           ? `<span class="badge badge-kb">Kettlebell</span>` 
           : `<span class="badge badge-bodyweight">Bodyweight</span>`;
 
+        if (ex.movement) {
+          badges.innerHTML += `<span class="badge" style="background: rgba(168,85,247,0.18); color:#d8b4fe;">${ex.movement.toUpperCase()}</span>`;
+        }
+
+        if (ex.unilateral) {
+          badges.innerHTML += `<span class="badge" style="background: rgba(251,146,60,0.18); color:#fdba74;">R/L Paired</span>`;
+        }
+
         if (ex.muscle) {
           badges.innerHTML += `<span class="badge badge-muscle">${ex.muscle}</span>`;
         }
