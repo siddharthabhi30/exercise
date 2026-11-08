@@ -287,6 +287,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.25s ease;
 }
 
 .demo-frame img {
@@ -294,20 +295,32 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: opacity 0.25s ease;
+}
+
+.demo-frame.resting {
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.demo-frame.resting img {
+  opacity: 0.72;
 }
 
 .demo-next-label {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  color: var(--primary);
-  font-size: 0.75rem;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(8px);
+  color: #38bdf8;
+  font-size: 0.82rem;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* Exercise Information */

@@ -109,6 +109,18 @@
     });
   }
 
+  // Preload all workout GIFs in memory so they appear instantly during work intervals
+  function preloadWorkoutGifs(workout) {
+    if (!workout || !workout.intervals) return;
+    workout.intervals.forEach(interval => {
+      const ex = interval.exercise || interval.nextExercise;
+      if (ex && ex.gif) {
+        const img = new Image();
+        img.src = ex.gif;
+      }
+    });
+  }
+
   // =========================================================================
   // SCREEN 2: WORKOUT FLOW
   // =========================================================================
@@ -117,6 +129,7 @@
   const elTargetPill = document.getElementById('workout-target-pill');
   const elModeBanner = document.getElementById('mode-banner');
   const elSwitchSidesBanner = document.getElementById('switch-sides-banner');
+  const elDemoFrame = document.querySelector('.demo-frame');
   const elDemoImg = document.getElementById('workout-demo-img');
   const elNextLabel = document.getElementById('demo-next-label');
   const elExName = document.getElementById('current-ex-name');
@@ -126,6 +139,16 @@
   const btnPauseResume = document.getElementById('btn-pause-resume');
   const btnSkip = document.getElementById('btn-skip');
   const btnEndWorkout = document.getElementById('btn-end-workout');
+
+  // Robust Image Error Recovery: Fall back to raw GitHub mirror if CDN stalls
+  elDemoImg.onerror = function() {
+    const current = timer.intervals[timer.currentIndex];
+    const targetEx = current?.type === 'work' ? current.exercise : current?.nextExercise;
+    if (targetEx && targetEx.fallbackGif && elDemoImg.src !== targetEx.fallbackGif) {
+      console.warn('Switching to fallback GIF for:', targetEx.name);
+      elDemoImg.src = targetEx.fallbackGif;
+    }
+  };
 
   // Confirmation Modal
   const modalBackdrop = document.getElementById('modal-cancel-workout');
@@ -141,6 +164,9 @@
       restSeconds: settings.restSeconds
     });
 
+    // Preload all assets
+    preloadWorkoutGifs(currentWorkout);
+
     timer.loadWorkout(currentWorkout);
     showScreen('workout');
     timer.start();
@@ -152,7 +178,7 @@
 
     // Mode Banner
     elModeBanner.className = 'mode-banner ' + (isWork ? 'work' : 'rest');
-    elModeBanner.textContent = isWork ? '🔥 WORK' : '☕ REST & RECOVER';
+    elModeBanner.textContent = isWork ? '🔥 WORK INTERVAL' : '☕ REST & RECOVER';
 
     // Progress Bar class
     elProgressFill.className = 'progress-bar-fill ' + (isWork ? 'work' : 'rest');
@@ -168,20 +194,28 @@
       elTargetPill.textContent = ex.target || ex.group;
       elExName.textContent = ex.name;
       elExCue.textContent = ex.cue || '';
+
+      // Demo frame styling during WORK: full opacity, no rest overlay
+      elDemoFrame.classList.remove('resting');
       elNextLabel.style.display = 'none';
 
-      // Load exercise demo GIF
+      // Load active exercise demo GIF
       elDemoImg.src = ex.gif;
     } else {
       const next = interval.nextExercise;
-      elTargetPill.textContent = 'Get Ready';
-      elExName.textContent = 'Rest Period';
-      elExCue.textContent = next ? `Next up: ${next.name} (${next.cue || ''})` : 'Final rest!';
-      elNextLabel.style.display = 'block';
-      elNextLabel.textContent = next ? `UP NEXT: ${next.name}` : 'UP NEXT: Finish!';
+      elTargetPill.textContent = 'RESTING';
+      elExName.textContent = 'Rest & Breathe';
+      elExCue.textContent = next ? `Next Exercise: ${next.name} (${next.cue || ''})` : 'Final rest of the workout!';
 
-      // Preview next exercise GIF
-      if (next) elDemoImg.src = next.gif;
+      // Demo frame styling during REST: dimmed preview showing what's UP NEXT
+      elDemoFrame.classList.add('resting');
+      elNextLabel.style.display = 'block';
+      elNextLabel.textContent = next ? `☕ REST NOW — UP NEXT: ${next.name}` : 'REST NOW';
+
+      // Show preview of next exercise
+      if (next && next.gif) {
+        elDemoImg.src = next.gif;
+      }
     }
   };
 
